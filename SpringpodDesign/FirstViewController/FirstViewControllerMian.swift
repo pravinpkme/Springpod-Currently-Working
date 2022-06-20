@@ -9,6 +9,12 @@ import UIKit
 
 
 class FirstViewController: UIViewController {
+    
+    var delegate: DataDelegate?
+    
+    
+    
+    
     @IBOutlet weak var view6: UIView!
     @IBOutlet weak var view4: UIView!
     @IBOutlet weak var view5: UIView!
@@ -41,7 +47,8 @@ class FirstViewController: UIViewController {
         greetingLogic()
         FVBannerImage.clipsToBounds = true
         FVBannerImage.layer.cornerRadius = 15
-        
+        delegate?.printThisString(String: "What the fuck")
+    
         
         
     }

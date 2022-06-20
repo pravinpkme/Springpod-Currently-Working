@@ -6,13 +6,18 @@
 //
 
 import UIKit
-import CoreLocation
-///just checking
-var tulet : String
-class LoginPage: UIViewController{
- 
-let locationManager = CLLocationManager()
+import SPPermissions
+
+protocol DataDelegate{
+    func printThisString(String: String)
+}
+
+class LoginPage: UIViewController, DataDelegate{
+    func printThisString(String: String) {
+        <#code#>
+    }
     
+     
     var iconClick = true
 
     @IBOutlet weak var fbimage: UIImageView!
@@ -43,12 +48,14 @@ let locationManager = CLLocationManager()
     }
     
     
+       
+    
+    
     
     override func viewDidLoad() {
             super.viewDidLoad()
-            
-        
-        locationManager.requestWhenInUseAuthorization()
+       
+        permissionManger()
         
         
         UsernameTextField.MakeSemiTransparent()
@@ -63,13 +70,27 @@ let locationManager = CLLocationManager()
     
     @IBAction func LoginPressed(_ sender: UIButton) {
         
+       
+        
+        
         postRequest()
         
     }
     
-    
+ 
+    func permissionManger(){
+        let controller = SPPermissions.native([.camera, .locationWhenInUse, .microphone, .bluetooth])
+      controller.delegate = self
+            controller.present(on: self)
+        
+        
 
-    func postRequest() {
+
+
+    }
+    
+    
+    func postRequest(       ) {
      
         guard let email = self.UsernameTextField.text else {return}
         guard let password = self.PasswordTextField.text else {return}
@@ -77,9 +98,9 @@ let locationManager = CLLocationManager()
         
         var device_Type = ""
         if UIDevice.current.userInterfaceIdiom == .phone{
-            device_Type = "iPhone"
+            device_Type = "Tablet"
         }else{
-            device_Type = "iPhone"
+            device_Type = "Tablet"
         }
         
         
@@ -132,44 +153,36 @@ let locationManager = CLLocationManager()
         do {
           // create json object from data or use JSONDecoder to convert to Model stuct
             if let jsonResponse = try JSONSerialization.jsonObject(with: responseData, options: .mutableContainers) as? [String:Any] {
-              
-            print(jsonResponse)
-
-                DispatchQueue.main.async {
-                    let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
-                      let nextViewController = storyBoard.instantiateViewController(withIdentifier: "Tabbarcontroller")
-                      self.present(nextViewController, animated:false, completion:nil)
-                }
-                 
-               
-              
-
                 
                 
+                print(jsonResponse)
                 let value = jsonResponse.array("root")
+                
+                
                 let status = value[0].string("status")
+                
                 print(status)
-                if status == "Active"{
-                    return
-                }
+                
+                let CustomerName = value[0].string("firstName")
+//
+//                let FView = self.storyboard?.instantiateViewController(withIdentifier: "FirstViewController") as! FirstViewController
+//                    FView.namestring = "Hello"
+//
+                
                
                 
-               // Utilities.showAlertMessage(message: status, onView: self)
-
-          } else {
-              
-              DispatchQueue.main.async {
-                  func showAlert(title: String, message: String){
-                      let alert = UIAlertController(title: title, message: message, preferredStyle: UIAlertController.Style.alert)
-                      alert.addAction(UIAlertAction(title: "Try Again", style: UIAlertAction.Style.default, handler: {(action) in alert.dismiss(animated: true, completion: nil)}))
-                      self.present(alert, animated: true, completion: nil)
-                  }
-                  showAlert(title: "Enter a Valied Email!", message: "This is not a valied email format")
-                print("data maybe corrupted or in wrong format")
-              }
-              
-              
-              
+                
+                if status == "Active"{
+                    self.EnterLoginPage()
+                    return
+                }else{
+                    DispatchQueue.main.async {
+                        self.showAlertMSG(msg: status)
+                    }}
+                
+             
+                
+            } else {
             throw URLError(.badServerResponse)
           }
         } catch let error {
@@ -181,11 +194,35 @@ let locationManager = CLLocationManager()
       task.resume()
     }
     
- 
+    func showAlertMSG(msg:String){
+        DispatchQueue.main.async {
+            let alert = UIAlertController(title: "Alert", message: msg, preferredStyle: UIAlertController.Style.alert)
+            
+            // add an action (button)
+            alert.addAction(UIAlertAction(title: "OK", style: UIAlertAction.Style.default, handler: nil))
+            
+            // show the alert
+            self.present(alert, animated: true, completion: nil)
+        }
+    }
+
+    
+    func EnterLoginPage(){
+        DispatchQueue.main.async {
+            let storyBoard : UIStoryboard = UIStoryboard(name: "Main", bundle:nil)
+            let nextViewController = storyBoard.instantiateViewController(withIdentifier: "MainTabbarcontroller")
+            self.present(nextViewController, animated:true, completion:nil)
+            
+        }
+    }
+    
+
         
-//    self.registerPressed.text = "Register"
-//        
-//    self.loginPressed.text = "Login"
+        
+    
+    
+
+    
 }
 
 

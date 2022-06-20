@@ -26,5 +26,13 @@
 			</array>
 		</dict>
 	</dict>
+	<key>NSLocationWhenInUseUsageDescription</key>
+	<string>Please allow Location permission to continue further</string>
+	<key>NSCameraUsageDescription</key>
+	<string>Please allow Camera usage to continue further</string>
+	<key>NSMicrophoneUsageDescription</key>
+	<string>Please allow Microphone usage to continue further</string>
+	<key>NSBluetoothAlwaysUsageDescription</key>
+	<string>Please enable Bluetooth for the app to work</string>
 </dict>
 </plist>
