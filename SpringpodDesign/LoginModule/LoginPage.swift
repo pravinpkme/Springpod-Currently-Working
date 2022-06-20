@@ -7,8 +7,8 @@
 
 import UIKit
 import CoreLocation
-
-
+///just checking
+var tulet : String
 class LoginPage: UIViewController{
  
 let locationManager = CLLocationManager()
