@@ -10,7 +10,6 @@ import UIKit
 
 class FirstViewController: UIViewController {
     
-    var delegate: DataDelegate?
     
     
     
@@ -47,11 +46,11 @@ class FirstViewController: UIViewController {
         greetingLogic()
         FVBannerImage.clipsToBounds = true
         FVBannerImage.layer.cornerRadius = 15
-        delegate?.printThisString(String: "What the fuck")
+       
     
         
-        
     }
+    
     
     
     

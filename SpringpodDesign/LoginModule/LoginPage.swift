@@ -8,53 +8,48 @@
 import UIKit
 import SPPermissions
 
-protocol DataDelegate{
-    func printThisString(String: String)
-}
 
-class LoginPage: UIViewController, DataDelegate{
-    func printThisString(String: String) {
-        <#code#>
-    }
+class LoginPage: UIViewController{
     
-     
+    
+    
     var iconClick = true
-
+    
+    
     @IBOutlet weak var fbimage: UIImageView!
     @IBOutlet weak var registerPressed: UILabel!
     @IBOutlet weak var loginPressed: UILabel!
     @IBOutlet weak var UsernameTextField: UITextField!  {
         didSet {
             let whitePlaceholderText = NSAttributedString(string: "Username",
-                                                        attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
+                                                          attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
             UsernameTextField.attributedPlaceholder = whitePlaceholderText
         }
     }
     @IBOutlet weak var PasswordTextField: UITextField!  {
-    didSet {
-        let whitePlaceholderText = NSAttributedString(string: "Password",
-                                                    attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
-        PasswordTextField.attributedPlaceholder = whitePlaceholderText
+        didSet {
+            let whitePlaceholderText = NSAttributedString(string: "Password",
+                                                          attributes: [NSAttributedString.Key.foregroundColor: UIColor.white])
+            PasswordTextField.attributedPlaceholder = whitePlaceholderText
+        }
     }
-}
-   
+    
     
     
     
     
     @IBAction func iconAction(_ sender: Any) {
-
+        
         PasswordTextField.enablePasswordToggle()
     }
     
     
-       
-    
+   
     
     
     override func viewDidLoad() {
-            super.viewDidLoad()
-       
+        super.viewDidLoad()
+        
         permissionManger()
         
         
@@ -63,35 +58,27 @@ class LoginPage: UIViewController, DataDelegate{
         registerPressed.MakeLableSemiTransaprent()
         loginPressed.MakeLableSemiTransaprent()
         PasswordTextField.enablePasswordToggle()
-
+        
     }
     
     
     
     @IBAction func LoginPressed(_ sender: UIButton) {
-        
-       
-        
-        
         postRequest()
         
     }
     
- 
+    
     func permissionManger(){
         let controller = SPPermissions.native([.camera, .locationWhenInUse, .microphone, .bluetooth])
-      controller.delegate = self
-            controller.present(on: self)
+        controller.present(on: self)
         
-        
-
-
-
     }
     
     
-    func postRequest(       ) {
-     
+    func postRequest() {
+       
+        
         guard let email = self.UsernameTextField.text else {return}
         guard let password = self.PasswordTextField.text else {return}
         
@@ -104,7 +91,7 @@ class LoginPage: UIViewController, DataDelegate{
         }
         
         
-
+        
         let url = URL(string: "http://barraonqueen.sprngpod.com:8080/indexbarraonqueen.php/newNormalLogin1")!
         var request = URLRequest(url: url)
         request.setValue("application/x-www-form-urlencoded", forHTTPHeaderField: "Content-Type")//
@@ -127,71 +114,97 @@ class LoginPage: UIViewController, DataDelegate{
         print("Login Params -> \(parameters)")
         let session = URLSession.shared
         request.httpBody = parameters.percentEncoded()
-      
-      // create dataTask using the session object to send data to the server
-      let task = session.dataTask(with: request) { data, response, error in
         
-        if let error = error {
-          print("Post Request Error: \(error.localizedDescription)")
-          return
-        }
+        // create dataTask using the session object to send data to the server
+        let task = session.dataTask(with: request) { data, response, error in
+            
+            if let error = error {
+                print("Post Request Error: \(error.localizedDescription)")
+                return
+            }
+            
+            // ensure there is valid response code returned from this HTTP response
+            guard let httpResponse = response as? HTTPURLResponse,
+                  (200...299).contains(httpResponse.statusCode)
+            else {
+                print("Invalid Response received from the server")
+                return
+            }
+            
+            // ensure there is data returned
+            guard let responseData = data else {
+                print("nil Data received from the server")
+                return
+            }
+            
+            do {
+                // create json object from data or use JSONDecoder to convert to Model stuct
+                if let jsonResponse = try JSONSerialization.jsonObject(with: responseData, options: .mutableContainers) as? [String:Any] {
+                    
+                    
+                    print(jsonResponse)
+                    let value = jsonResponse.array("root")
+                    
+                    
+                    let status = value[0].string("status")
+                    
+                    print(status)
+                    
+                    let firstName = value[0].string("firstName")
+                    let lastName = value[0].string("lastName")
+                    let emailID = value[0].string("emailId")
+                    let loginName = value[0].string("loginName")
+                    let mobileNo = value[0].string("mobileNo")
+                    let Country = value[0].string("country")
+                    let CustomerID  = value[0].string("customerId")
+                    let ipAddress = value[0].string("ipAddress")
+                    let uniqueDeviceId = value[0].string("uniqueDeviceId")
+                    let language = value[0].string("language")
+                    let PIN = value[0].string("PIN")
+                    let areaCode = value[0].string("areaCode")
+                    let streetName = value[0].string("streetName")
+                    let city = value[0].string("city")
+                    let postalCode = value[0].string("postalCode")
+                    let province = value [0].string("province")
+                    let roomNumber = value[0].string("roomNumber")
+                    let checkInDate = value[0].string("checkInDate")
+                    let checkOutDate = value[0].string("checkOutdate")
+                    let branchId = value [0].string("branchId")
+                    let numberOfDevices = value[0].string("numberOfDevices")
+                    let lastSeenChannelId = value[0].string("lastSeenChannelId")
+                    let lastSeenChannelTime = value[0].string("lastSeenChannelTime")
+                    
+                    
+                    
         
-        // ensure there is valid response code returned from this HTTP response
-        guard let httpResponse = response as? HTTPURLResponse,
-              (200...299).contains(httpResponse.statusCode)
-        else {
-          print("Invalid Response received from the server")
-          return
-        }
-        
-        // ensure there is data returned
-        guard let responseData = data else {
-          print("nil Data received from the server")
-          return
-        }
-          
-        do {
-          // create json object from data or use JSONDecoder to convert to Model stuct
-            if let jsonResponse = try JSONSerialization.jsonObject(with: responseData, options: .mutableContainers) as? [String:Any] {
+                    
+                    
+                    
+                    
+                    
+                    
+                    if status == "Active"{
+                        self.EnterLoginPage()
+                        return
+                    }else{
+                        DispatchQueue.main.async {
+                            self.showAlertMSG(msg: status)
+                        }}
+                    
+                    
+                    
+                } else {
+                    throw URLError(.badServerResponse)
+                }
+            } catch let error {
+                print(error.localizedDescription)
                 
-                
-                print(jsonResponse)
-                let value = jsonResponse.array("root")
-                
-                
-                let status = value[0].string("status")
-                
-                print(status)
-                
-                let CustomerName = value[0].string("firstName")
-//
-//                let FView = self.storyboard?.instantiateViewController(withIdentifier: "FirstViewController") as! FirstViewController
-//                    FView.namestring = "Hello"
-//
-                
-               
-                
-                
-                if status == "Active"{
-                    self.EnterLoginPage()
-                    return
-                }else{
-                    DispatchQueue.main.async {
-                        self.showAlertMSG(msg: status)
-                    }}
-                
-             
-                
-            } else {
-            throw URLError(.badServerResponse)
-          }
-        } catch let error {
-          print(error.localizedDescription)
+            }
+            
+            
             
         }
-      }
-      // perform the task
-      task.resume()
+        task.resume()
     }
     
     func showAlertMSG(msg:String){
@@ -205,7 +218,7 @@ class LoginPage: UIViewController, DataDelegate{
             self.present(alert, animated: true, completion: nil)
         }
     }
-
+    
     
     func EnterLoginPage(){
         DispatchQueue.main.async {
@@ -216,12 +229,12 @@ class LoginPage: UIViewController, DataDelegate{
         }
     }
     
-
-        
-        
     
     
-
+    
+    
+    
+    
     
 }
 

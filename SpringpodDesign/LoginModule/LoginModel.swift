@@ -77,3 +77,10 @@ struct LastChannelTime: Codable {
         case timezone
     }
 }
+
+struct LoginResponseReturnModel{
+    let firstName: String
+    let LastName: String
+    let emailID : String
+    
+}
